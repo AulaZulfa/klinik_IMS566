@@ -33,7 +33,7 @@ class AppController extends Controller
 {
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
-        //parent::beforeFilter($event);
+        parent::beforeFilter($event);
 
         $this->fetchTable('Settings');
         //$this->Settings = $this->fetchTable('Settings');
@@ -75,7 +75,32 @@ class AppController extends Controller
         $this->set('metaDescription', $config->get('meta_desc'));
 
         //$this->set(compact('settings'));
+
+        // --- Kod Auto-Mapping (Letak Sini) ---
+    $identity = $this->Authentication->getIdentity();
+    if ($identity) {
+        $userId = $identity->getIdentifier();
+        $userEmail = $identity->get('email');
+
+        $patientsTable = $this->fetchTable('Patients');
+
+        // Cari rekod pesakit yang emel sama tapi user_id masih kosong
+        $patient = $patientsTable->find()
+            ->where([
+                'email' => $userEmail,
+                'user_id IS' => null
+            ])
+            ->first();
+
+        if ($patient) {
+            $patient->user_id = $userId;
+            $patientsTable->save($patient);
+        }
     }
+}
+    
+
+    
     /**
      * Initialization hook method.
      *
@@ -92,6 +117,7 @@ class AppController extends Controller
         $this->loadComponent('Authentication.Authentication');
 
         $this->loadComponent('Flash');
+        
 
         /*
          * Enable the following component for recommended CakePHP form protection settings.
