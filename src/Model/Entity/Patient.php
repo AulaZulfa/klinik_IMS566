@@ -9,7 +9,7 @@ use Cake\ORM\Entity;
  * Patient Entity
  *
  * @property int $id
- * @property string $user_id
+ * @property int $user_id
  * @property string $name
  * @property string $email
  * @property int $ic
