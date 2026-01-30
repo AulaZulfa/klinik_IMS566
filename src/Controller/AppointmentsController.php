@@ -226,6 +226,9 @@ class AppointmentsController extends AppController
         $appointment = $this->Appointments->newEmptyEntity();
         if ($this->request->is('post')) {
             $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
+            
+            $appointment->user_id = $this->Authentication->getIdentity()->getIdentifier();
+            
             if ($this->Appointments->save($appointment)) {
                 $this->Flash->success(__('The appointment has been saved.'));
 
